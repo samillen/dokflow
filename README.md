@@ -1,71 +1,119 @@
-# doma
+# Dokflow
 
-**doma** is a simple document managment app for django.
-It provides the necessary models and view and is ready to be included into your project.
+**Dokflow** is a production-grade document management system for Django applications.
+It provides comprehensive document handling with versioning, audit trails, and automatic preview generation.
 
-![django_doma_logo](assets/django-doma-logo.png?raw=true "django-doma-logo")
+## Overview
 
-## Idea
+Dokflow is designed for modern business and accounting applications that require robust document management without deploying a full Document Management System like Mayan EDMS.
 
-Many modern (accounting, business) applications work with digital documents. This app aims to provide easy integration of digital documents into your Django application, if you have no central Document Management System like Mayan EDMS.
+## Key Features
 
-## Features
+* **Document Versioning**: Automatic version control through document replacement mechanism
+* **Audit Trail Compliance**: Documents become read-only after protection period for compliance
+* **Automatic Previews**: PDF-to-JPEG preview generation with error handling
+* **Type Classification**: Organize documents using document types
+* **Immutability**: Once created, documents cannot be modified - only versioned
+* **Transaction Safety**: Atomic operations for document creation and replacement
+* **Comprehensive Logging**: Full audit logging for document lifecycle events
+* **Database Optimization**: Indexed queries for performance
 
-_Django-doma_ currently provides some models which are ready to be used in our application
+## Architecture Highlights
 
-* Document model to store documents
-* DocumentType to group/order documents
-
-Documents will become readonly after a while, this helps storing your documents audit-proof.
-Once readonly, Documents can not be deleted, but only "replaced", i.e. an updated version is 
-linked, but the original is kept in place (as a sort of version control).
-
-## Apps using django-doma
-
-* [django-kesha](https://github.com/olf42/django-kesha) - Accounting App
+* Clean separation of concerns (models, signals, utilities)
+* Comprehensive docstrings and type hints for maintainability
+* Error handling with graceful fallbacks
+* Property-based API for document relationships
+* Production-ready signal handling and lifecycle management
 
 ## Compatibility
 
-Tested with the following versions of Python/Django:
+Tested with the following versions:
 
-* Django: 2.2, 3.0, 3.1, 3.2
-* Python: 3.7, 3.8, 3.9
+* Django: 3.2, 4.0+
+* Python: 3.8, 3.9, 3.10, 3.11
 
 ## Installation
 
-Install `django-doma` using pip:
+Install `django-dokflow` using pip:
 
-```zsh
-$ pip install django-doma
+```bash
+pip install django-dokflow
 ```
 
-## Quick start
+## Quick Start
 
-1. Add "doma" to your INSTALLED_APPS setting like this::
+1. Add "dokflow" to your INSTALLED_APPS:
 
 ```python
 INSTALLED_APPS = [
     ...
-    "doma",
+    "dokflow",
 ]
 ```
 
-2. Include the polls URLconf in your project urls.py like this::
+2. Configure in your project's settings.py (optional):
 
-    path('doma/', include('doma.urls')),
+```python
+# Document storage paths (relative to MEDIA_ROOT)
+DOKFLOW_DOCUMENTS_DIR = "documents/"
+DOKFLOW_PREVIEW_DIR = "preview/"
 
-3. Run ``python manage.py migrate`` to create the doma models.
+# Document protection duration
+from datetime import timedelta
+DOKFLOW_PROTECT_AFTER = timedelta(days=1)
 
-4. Visit http://127.0.0.1:8000/doma/ to start accounting.
+# Enable/disable preview generation
+DOKFLOW_RENDER_PREVIEW = True
+```
+
+3. Run migrations:
+
+```bash
+python manage.py migrate dokflow
+```
+
+## Usage Example
+
+```python
+from dokflow.models import Document, DocumentType
+
+# Create a document type
+invoice_type = DocumentType.objects.create(name="Invoice")
+
+# Create a document
+doc = Document.objects.create(
+    name="Invoice-2024-001",
+    type=invoice_type,
+    file=uploaded_file
+)
+
+# Create a new version
+updated_doc = Document.objects.replace(doc, updated_file)
+
+# Access version chain
+print(updated_doc.version_chain)  # [original_doc, updated_doc]
+```
+
+## Configuration
+
+Customize dokflow behavior in your Django settings:
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `DOKFLOW_DOCUMENTS_DIR` | `"documents/"` | Document storage directory |
+| `DOKFLOW_PREVIEW_DIR` | `"preview/"` | Preview image storage directory |
+| `DOKFLOW_PROTECT_AFTER` | `timedelta(days=1)` | Duration until documents become protected |
+| `DOKFLOW_RENDER_PREVIEW` | `True` | Enable automatic PDF preview generation |
 
 ## License
 
 MIT
 
-## Copyright
-
-2021, Florian Rämisch
-
 ## Authors
 
-* Florian Rämisch
+* samillen <samillen@users.noreply.github.com>
+
+## Original Project
+
+Based on the original django-doma by Florian Rämisch

@@ -3,7 +3,7 @@ import factory.django
 from pathlib import Path
 
 from django.core.files.uploadedfile import SimpleUploadedFile
-from doma.models import Document, DocumentType
+from dokflow.models import Document, DocumentType
 
 DOCUMENT_BASE_PATH = Path(__file__).parent
 DOCUMENT_PATH = DOCUMENT_BASE_PATH / "document.pdf"

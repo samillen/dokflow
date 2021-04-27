@@ -1,2 +1,2 @@
 #!/bin/bash
-PYTHONPATH=. pytest --cov=./doma
+PYTHONPATH=. pytest --cov=./dokflow

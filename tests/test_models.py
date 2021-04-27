@@ -3,7 +3,7 @@ from django.db.models import ProtectedError
 from django.test import TestCase
 from freezegun import freeze_time
 
-from doma.models import Document
+from dokflow.models import Document
 from tests.factories import (
     DocumentFactory,
     DocumentTypeFactory,
@@ -12,7 +12,7 @@ from tests.factories import (
 )
 
 
-class DomaTestCase(TestCase):
+class DokflowTestCase(TestCase):
     def setUp(self):
         self.t = DocumentTypeFactory()
 

@@ -1,14 +1,14 @@
 [tool.poetry]
-name = "django-doma"
-version = "0.2.2"
-description = "Simple Document Management for Django"
-authors = ["Florian Rämisch <olf@subsignal.org>"]
-license = "GPL-3.0"
+name = "django-dokflow"
+version = "1.0.0"
+description = "Production-grade Document Management for Django"
+authors = ["samillen <samillen@users.noreply.github.com>"]
+license = "MIT"
 readme = "README.md"
-repository = "https://github.com/olf42/django-doma"
+repository = "https://github.com/samillen/django-dokflow"
 
 packages = [
-    { include="doma", from="." },
+    { include="dokflow", from="." },
 ]
 
 [tool.poetry.dependencies]
