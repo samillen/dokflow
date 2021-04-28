@@ -114,6 +114,3 @@ MIT
 
 * samillen <samillen@users.noreply.github.com>
 
-## Original Project
-
-Based on the original django-doma by Florian Rämisch
