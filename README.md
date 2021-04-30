@@ -34,36 +34,65 @@ Tested with the following versions:
 * Python: 3.8, 3.9, 3.10, 3.11
 
 ## Installation
+ # Dokflow
 
-Install `django-dokflow` using pip:
+Dokflow is a lightweight, production-oriented document management app for Django projects.
+
+This repository contains the `dokflow` Django app used to manage documents with versioning,
+audit trails, preview generation, and configuration options suitable for business applications.
+
+**Highlights**
+
+- Document versioning and immutable history
+- Audit logging and optional protection/lock-after-period
+- Automatic preview generation for PDFs
+- Type-based document classification and simple API surface
+
+## Requirements
+
+- Python 3.8+
+- Django 3.2 or 4.x
+
+## Installation
+
+Install from PyPI:
 
 ```bash
 pip install django-dokflow
 ```
 
-## Quick Start
+Or install from source for development:
 
-1. Add "dokflow" to your INSTALLED_APPS:
+```bash
+git clone https://github.com/your-org/dokflow.git
+cd dokflow
+pip install -e .
+```
+
+## Quick start
+
+1. Add `dokflow` to `INSTALLED_APPS` in your Django `settings.py`:
 
 ```python
 INSTALLED_APPS = [
-    ...
-    "dokflow",
+    # ...
+    'dokflow',
 ]
 ```
 
-2. Configure in your project's settings.py (optional):
+2. (Optional) Configure behavior via settings:
 
 ```python
-# Document storage paths (relative to MEDIA_ROOT)
-DOKFLOW_DOCUMENTS_DIR = "documents/"
-DOKFLOW_PREVIEW_DIR = "preview/"
-
-# Document protection duration
 from datetime import timedelta
+
+# Relative to MEDIA_ROOT
+DOKFLOW_DOCUMENTS_DIR = 'documents/'
+DOKFLOW_PREVIEW_DIR = 'previews/'
+
+# Time until documents become protected (immutable)
 DOKFLOW_PROTECT_AFTER = timedelta(days=1)
 
-# Enable/disable preview generation
+# Enable/disable automatic preview rendering
 DOKFLOW_RENDER_PREVIEW = True
 ```
 
@@ -73,44 +102,57 @@ DOKFLOW_RENDER_PREVIEW = True
 python manage.py migrate dokflow
 ```
 
-## Usage Example
+## Usage
+
+Core API examples:
 
 ```python
 from dokflow.models import Document, DocumentType
 
-# Create a document type
-invoice_type = DocumentType.objects.create(name="Invoice")
+invoice = DocumentType.objects.create(name='Invoice')
 
-# Create a document
-doc = Document.objects.create(
-    name="Invoice-2024-001",
-    type=invoice_type,
-    file=uploaded_file
-)
+doc = Document.objects.create(name='Invoice-2026-001', type=invoice, file=uploaded_file)
 
-# Create a new version
-updated_doc = Document.objects.replace(doc, updated_file)
+# Replace file and create a new version
+new_doc = Document.objects.replace(doc, new_file)
 
-# Access version chain
-print(updated_doc.version_chain)  # [original_doc, updated_doc]
+# Iterate version chain
+for version in new_doc.version_chain:
+    print(version.pk, version.file.name)
 ```
 
-## Configuration
+Refer to the code docstrings for more detailed API surface and signal behaviour.
 
-Customize dokflow behavior in your Django settings:
+## Configuration options
 
-| Setting | Default | Description |
-|---------|---------|-------------|
-| `DOKFLOW_DOCUMENTS_DIR` | `"documents/"` | Document storage directory |
-| `DOKFLOW_PREVIEW_DIR` | `"preview/"` | Preview image storage directory |
-| `DOKFLOW_PROTECT_AFTER` | `timedelta(days=1)` | Duration until documents become protected |
-| `DOKFLOW_RENDER_PREVIEW` | `True` | Enable automatic PDF preview generation |
+- `DOKFLOW_DOCUMENTS_DIR` (str): Relative folder under `MEDIA_ROOT` for documents. Default: `'documents/'`.
+- `DOKFLOW_PREVIEW_DIR` (str): Relative folder for preview images. Default: `'previews/'`.
+- `DOKFLOW_PROTECT_AFTER` (timedelta): Time after creation when documents become protected. Default: `timedelta(days=1)`.
+- `DOKFLOW_RENDER_PREVIEW` (bool): Enable preview generation. Default: `True`.
+
+## Tests
+
+Run the test suite from the repository root (uses pytest):
+
+```bash
+pytest -q
+```
+
+## Contributing
+
+Contributions are welcome. Please follow these steps:
+
+1. Fork the repository and create a feature branch.
+2. Add tests for any new behavior.
+3. Open a pull request describing your changes.
+
+See `CONTRIBUTING.md` (if present) for more details.
 
 ## License
 
-MIT
+This project is licensed under the MIT License.
 
-## Authors
+## Maintainer
 
-* samillen <samillen@users.noreply.github.com>
+samillen <samillen@users.noreply.github.com>
 
